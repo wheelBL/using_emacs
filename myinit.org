@@ -1,0 +1,522 @@
+#+STARTUP: overview
+
+* interface tweaks
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+(global-set-key (kbd "<f5>") 'revert-buffer)
+#+END_SRC
+
+#+RESULTS:
+: revert-buffer
+
+* try
+#+BEGIN_SRC emacs-lisp
+(use-package try
+  :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
+* which key
+  Brings up some help
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config (which-key-mode))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+* Org mode
+  Org bullets makes things look pretty
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook 'org-bullets-mode))
+
+  (custom-set-variables
+   '(org-directory "~/Dropbox/orgfiles")
+   '(org-default-notes-file (concat org-directory "/notes.org"))
+   '(org-export-html-postamble nil)
+   '(org-hide-leading-stars t)
+   '(org-startup-folded (quote overview))
+   '(org-startup-indented t)
+   )
+
+  (setq org-file-apps
+	(append '(
+		  ("\\.pdf\\'" . "evince %s")
+		  ) org-file-apps))
+
+  (global-set-key "\C-ca" 'org-agenda)
+
+
+
+  (add-to-list 'safe-local-variable-values
+	       '(after-save-hook . org-latex-preview))
+#+END_SRC
+
+#+RESULTS:
+: ((after-save-hook . org-latex-preview) (after-save-hook . org-latex-preview))
+
+* Ace windows for easy window switching
+#+BEGIN_SRC emacs-lisp
+ (use-package ace-window
+    :ensure t
+    :init
+    (progn
+      (global-set-key [remap other-window] 'ace-window)
+      (custom-set-faces
+       '(aw-leading-char-face
+	 ((t (:inherit ace-jum-face-foreground :height 3.0)))))))
+#+END_SRC
+
+* Swiper / Ivy / Counsel
+  Swiper gives us a really efficient incremental search with regular expressions and Ivy/Counsel replace a lot of ido or helms completion functionality
+#+BEGIN_SRC emacs-lisp
+  (use-package counsel
+    :ensure t
+    :bind
+    (("M-y" . counsel-yank-pop)
+     :map ivy-minibuffer-map
+     ("M-y" . ivy-next-line))
+    )
+
+   (use-package ivy
+      :ensure t
+      :diminish (ivy-mode)
+      :bind (("C-x b" . ivy-switch-buffer))
+      :config
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (setq ivy-count-format "%d/%d")
+      (setq ivy-display-style 'fancy))
+
+    (use-package swiper
+      :ensure t
+      :bind (("C-s" . swiper)
+	     ("C-r" . swiper)
+	     ("C-c C-r" . ivy-resume)
+	     ("M-x" . counsel-M-x)
+	     ("C-x C-f" . counsel-find-file))
+      :config
+      (progn
+	(ivy-mode 1)
+	(setq ivy-use-virtual-buffers t)
+	(setq ivy-display-style 'fancy)
+	(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)))
+#+END_SRC 
+* Avy - navigate by searching for a letter on the screen and jumping to it
+See https://github.com/abo-abo/avy for more info
+#+BEGIN_SRC emacs-lisp
+   (use-package avy
+      :ensure t
+      :bind ("M-s" . avy-goto-char-2))
+#+END_SRC
+* Company
+#+BEGIN_SRC emacs-lisp
+;; pip install jedi epc
+  (use-package company
+    :ensure t
+    :config
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-length 3)
+    (global-company-mode t))
+
+  (defun my/python-mode-hook ()
+    (add-to-list 'company-backends 'company-jedi))
+
+  (add-hook 'python-mode-hook 'my/python-mode-hook)
+  (use-package company-jedi
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'jedi:setup))
+
+  (defun my/python-mode-hook ()
+    (add-to-list 'company-backends 'company-jedi))
+
+  (add-hook 'python-mode-hook 'my/python-mode-hook)
+
+#+END_SRC
+
+#+RESULTS:
+| jedi:setup | my/python-mode-hook |
+
+* the rest
+#+BEGIN_SRC emacs-lisp
+  (setq indo-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (ido-mode 1)
+
+  (defalias 'list-buffers 'ibuffer)
+
+  (use-package tabbar
+    :ensure t
+    :config
+    (tabbar-mode 1))
+
+  (use-package auto-complete
+    :ensure t
+    :init
+    (progn
+      (ac-config-default)
+      (global-auto-complete-mode t)))
+
+  ;; (use-package color-theme
+  ;;  :ensure t)
+
+  (use-package zenburn-theme
+    :ensure t
+    :config (load-theme 'zenburn t))
+
+  (use-package htmlize
+    :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
+* Reveal.js
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-reveal
+    :ensure ox-reveal)
+
+  (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/")
+  (setq org-reveal-mathjax t)
+#+END_SRC
+
+#+RESULTS:
+: t
+
+* Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init
+    (global-flycheck-mode t))
+
+#+END_SRC
+
+#+RESULTS:
+
+* Python
+#+BEGIN_SRC emacs-lisp
+  (setq py-python-command "/usr/local/bin/python3")
+  (setq python-shell-interpreter "python3")
+  (setq elpy-rpc-python-command "python3")
+  (setq jedi:environment-root "jedi")
+  (setq jedi:environment-virtualenv
+	(append python-environment-virtualenv
+		'("--python" "/usr/local/bin/python3")))
+
+  (use-package elpy
+    :ensure t
+    :custom (elpy-rpc-backend "jedi")
+    :config
+    (elpy-enable))
+
+  (use-package virtualenvwrapper
+    :ensure t
+    :config
+    (venv-initialize-interactive-shells)
+    (venv-initialize-eshell))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+* Yasnippet
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :init
+    (yas-global-mode 1))
+
+#+END_SRC
+
+#+RESULTS:
+
+* Undo Tree
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :init
+    (global-undo-tree-mode))
+
+#+END_SRC
+
+#+RESULTS:
+
+* Misc packages
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode t)
+
+  (use-package beacon
+    :ensure t
+    :config
+    (beacon-mode 1))
+
+
+  (use-package hungry-delete
+    :ensure t
+    :config
+    (global-hungry-delete-mode))
+
+  (use-package expand-region
+    :ensure t
+    :config
+    (global-set-key (kbd "C-=") 'er/expand-region))
+
+
+  (use-package multiple-cursors
+    :ensure t)
+
+  (setq save-interprogram-paste-before-kill t)
+
+
+
+#+END_SRC
+
+#+RESULTS:
+
+* iedit and narrow / widen dwin
+#+BEGIN_SRC emacs-lisp
+    ;; C-;
+  (use-package iedit
+    :ensure t) 
+
+  ; if you're windened, narrow to the region, if you're narrowed, widen
+  ; bound to C-x n
+  (defun narrow-or-widen-dwim (p)
+  "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
+  Intelligently means: region, org-src-block, org-subtree, or defun,
+  whichever applies first.
+  Narrowing to org-src-block actually calls `org-edit-src-code'.
+
+  With prefix P, don't widen, just narrow even if buffer is already
+  narrowed."
+  (interactive "P")
+  (declare (interactive-only))
+  (cond ((and (buffer-narrowed-p) (not p)) (widen))
+  ((region-active-p)
+  (narrow-to-region (region-beginning) (region-end)))
+  ((derived-mode-p 'org-mode)
+  ;; `org-edit-src-code' is not a real narrowing command.
+  ;; Remove this first conditional if you don't want it.
+  (cond ((ignore-errors (org-edit-src-code))
+  (delete-other-windows))
+  ((org-at-block-p)
+  (org-narrow-to-block))
+  (t (org-narrow-to-subtree))))
+  (t (narrow-to-defun))))
+
+  ;; (define-key endless/toggle-map "n" #'narrow-or-widen-dwim)
+  ;; This line actually replaces Emacs' entire narrowing keymap, that's
+  ;; how much I like this command. Only copy it if that's what you want.
+  (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+#+END_SRC
+
+#+RESULTS:
+: narrow-or-widen-dwim
+
+* evil
+#+BEGIN_SRC emacs-lisp
+  (use-package evil
+    :ensure t ;; install the evil package if not installed
+    :init ;; tweak evil's configuration before loading it
+    (setq evil-search-module 'evil-search)
+    (setq evil-ex-complete-emacs-commands nil)
+    (setq evil-vsplit-window-right t)
+    (setq evil-split-window-below t)
+    (setq evil-shift-round nil)
+    (setq evil-want-C-u-scroll t)
+    (setq evil-want-keybinding nil)
+    :config ;; tweak evil after loading it
+    (evil-mode)
+
+    ;; example how to map a command in normal mode (called 'normal state' in evil)
+    (define-key evil-normal-state-map (kbd ", w") 'evil-window-vsplit))
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init))
+
+  ;; gl and gL operators, like vim-lion
+    (use-package evil-lion
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("g l " . evil-lion-left)
+		  ("g L " . evil-lion-right)
+		  :map evil-visual-state-map
+		  ("g l " . evil-lion-left)
+		  ("g L " . evil-lion-right)))
+
+    ;; gc operator, like vim-commentary
+    (use-package evil-commentary
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gc" . evil-commentary)))
+
+    ;; gx operator, like vim-exchange
+    ;; NOTE using cx like vim-exchange is possible but not as straightforward
+    (use-package evil-exchange
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gx" . evil-exchange)
+		  ("gX" . evil-exchange-cancel)))
+
+    ;; gr operator, like vim's ReplaceWithRegister
+    (use-package evil-replace-with-register
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gr" . evil-replace-with-register)
+		  :map evil-visual-state-map
+		  ("gr" . evil-replace-with-register)))
+  ;; gl and gL operators, like vim-lion
+    (use-package evil-lion
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("g l " . evil-lion-left)
+		  ("g L " . evil-lion-right)
+		  :map evil-visual-state-map
+		  ("g l " . evil-lion-left)
+		  ("g L " . evil-lion-right)))
+
+    ;; gc operator, like vim-commentary
+    (use-package evil-commentary
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gc" . evil-commentary)))
+
+    ;; gx operator, like vim-exchange
+    ;; NOTE using cx like vim-exchange is possible but not as straightforward
+    (use-package evil-exchange
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gx" . evil-exchange)
+		  ("gX" . evil-exchange-cancel)))
+
+    ;; gr operator, like vim's ReplaceWithRegister
+    (use-package evil-replace-with-register
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gr" . evil-replace-with-register)
+		  :map evil-visual-state-map
+		  ("gr" . evil-replace-with-register)))
+  ;; gl and gL operators, like vim-lion
+    (use-package evil-lion
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("g l " . evil-lion-left)
+		  ("g L " . evil-lion-right)
+		  :map evil-visual-state-map
+		  ("g l " . evil-lion-left)
+		  ("g L " . evil-lion-right)))
+
+    ;; gc operator, like vim-commentary
+    (use-package evil-commentary
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gc" . evil-commentary)))
+
+    ;; gx operator, like vim-exchange
+    ;; NOTE using cx like vim-exchange is possible but not as straightforward
+    (use-package evil-exchange
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gx" . evil-exchange)
+		  ("gX" . evil-exchange-cancel)))
+
+    ;; gr operator, like vim's ReplaceWithRegister
+    (use-package evil-replace-with-register
+      :ensure t
+      :bind (:map evil-normal-state-map
+		  ("gr" . evil-replace-with-register)
+		  :map evil-visual-state-map
+		  ("gr" . evil-replace-with-register)))
+  ;; * operator in vusual mode
+    (use-package evil-visualstar
+      :ensure t
+      :bind (:map evil-visual-state-map
+		  ("*" . evil-visualstar/begin-search-forward)
+		  ("#" . evil-visualstar/begin-search-backward)))
+
+    ;; ex commands, which a vim user is likely to be familiar with
+    (use-package evil-expat
+      :ensure t
+      :defer t)
+
+    ;; visual hints while editing
+    (use-package evil-goggles
+      :ensure t
+      :config
+      (evil-goggles-use-diff-faces)
+      (evil-goggles-mode))
+
+  ;; * operator in vusual mode
+    (use-package evil-visualstar
+      :ensure t
+      :bind (:map evil-visual-state-map
+		  ("*" . evil-visualstar/begin-search-forward)
+		  ("#" . evil-visualstar/begin-search-backward)))
+
+    ;; ex commands, which a vim user is likely to be familiar with
+    (use-package evil-expat
+      :ensure t
+      :defer t)
+
+    ;; visual hints while editing
+    (use-package evil-goggles
+      :ensure t
+      :config
+      (evil-goggles-use-diff-faces)
+      (evil-goggles-mode))
+  ;; like vim-surround
+    (use-package evil-surround
+      :ensure t
+      :commands
+      (evil-surround-edit
+       evil-Surround-edit
+       evil-surround-region
+       evil-Surround-region)
+      :init
+      (evil-define-key 'operator global-map "s" 'evil-surround-edit)
+      (evil-define-key 'operator global-map "S" 'evil-Surround-edit)
+      (evil-define-key 'visual global-map "S" 'evil-surround-region)
+      (evil-define-key 'visual global-map "gS" 'evil-Surround-region))
+
+  (use-package evil-escape
+    :ensure t
+    :config
+    (progn
+      (evil-escape-mode t)
+      (setq-default evil-escape-key-sequence "jk")))
+#+END_SRC
+
+#+RESULTS:
+: t
+
+* Load other files
+#+BEGIN_SRC emacs-lisp
+  (defun load-if-exists (f)
+    "load the elisp file only if it exists and is readable"
+    (if (file-readable-p f)
+	(load-file f)))
+
+
+#+END_SRC
+
+* Better Shell
+#+BEGIN_SRC emacs-lisp
+  (use-package better-shell
+    :ensure t
+    :bind (("C-\"" . better-shell-shell)
+	   ("C-:" . better-shell-remote-open)))
+#+END_SRC
+
+#+RESULTS:
+: better-shell-remote-open
