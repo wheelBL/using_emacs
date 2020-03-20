@@ -1,13 +1,20 @@
+;;; init --- entry of all configuration
+
+;;; Commentary:
+
+;;; Code:
 (require 'package)
-
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
-
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives
-	     '("melpa" . "https://elpa.emacs-china.org/melpa/")
-	     '("gnu" . "http://elpa.emacs-china.org/gnu/"))
-
+(setq pckage-archives '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
+                        ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
 (package-initialize)
+
+(org-babel-load-file (expand-file-name "~/.emacs.d/preload.org"))
+
+; load platform-specific configuration
+(org-babel-load-file (expand-file-name "~/.emacs.d/platform.org"))
+
+
 
 ;; Bootstrap 'use-package'
 (unless (package-installed-p 'use-package)
@@ -15,11 +22,20 @@
   (package-install 'use-package))
 
 (org-babel-load-file (expand-file-name "~/.emacs.d/myinit.org"))
+
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-default-notes-file (concat org-directory "/notes.org"))
+ '(org-directory "~/Dropbox/orgfiles")
+ '(org-export-html-postamble nil)
+ '(org-hide-leading-stars t)
+ '(org-startup-folded (quote overview))
+ '(org-startup-indented t)
  '(package-selected-packages
    (quote
     (better-shell iedit expand-region hungry-delete beacon yasnippet-snippets evil-escape evil-surround evil-goggles evil-expat evil-visualstar evil-replace-with-register evil-exchange evil-commentary evil-lion evil-collection evil virtualenvwrapper yasnippet elpy company-jedi company flycheck htmlize ox-reveal zenburn-theme which-key use-package try tabbar org-bullets counsel color-theme auto-complete ace-window))))

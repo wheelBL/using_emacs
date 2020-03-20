@@ -1,0 +1,9 @@
+.python-environments/
+auto-save-list
+backup
+ac-comphist.dat
+elpa/
+elpy/
+!init.el
+*.el
+recentf

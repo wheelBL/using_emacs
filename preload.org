@@ -1,0 +1,13 @@
+* Load other files
+#+BEGIN_SRC emacs-lisp
+  (defun load-if-exists (f)
+    "load the elisp file only if it exists and is readable"
+    (if (file-readable-p f)
+	(load-file f)))
+#+END_SRC
+
+* proxy
+#+BEGIN_SRC emacs-lisp
+(load-if-exists "~/.emacs.d/proxy.el")
+#+END_SRC
+

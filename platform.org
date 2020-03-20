@@ -1,0 +1,18 @@
+* core
+#+BEGIN_SRC emacs-lisp
+(defconst IS-MAC     (eq system-type 'darwin))
+(defconst IS-LINUX   (eq system-type 'gnu/linux))
+(defconst IS-WINDOWS (memq system-type '(cygwin windows-nt ms-dos)))
+(defconst IS-BSD     (or IS-MAC (eq system-type 'berkeley-unix)))
+(defconst IS-WSL    
+    (string-match "Microsoft"
+         (with-temp-buffer (shell-command "uname -r" t)
+                           (goto-char (point-max))
+                           (delete-char -1)
+                           (buffer-string))))
+#+END_SRC
+* gnutls
+
+#+BEGIN_SRC emacs-lisp
+(when IS-WSL (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3"))
+#+END_SRC
