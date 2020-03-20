@@ -5,8 +5,9 @@
 ;;; Code:
 (require 'package)
 (setq package-enable-at-startup nil)
-(setq pckage-archives '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
-                        ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
+(add-to-list 'package-archives '("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/"))
+(add-to-list 'package-archives '("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/"))
+
 (package-initialize)
 
 (org-babel-load-file (expand-file-name "~/.emacs.d/preload.org"))
@@ -25,6 +26,8 @@
 
 
 
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -38,7 +41,7 @@
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (better-shell iedit expand-region hungry-delete beacon yasnippet-snippets evil-escape evil-surround evil-goggles evil-expat evil-visualstar evil-replace-with-register evil-exchange evil-commentary evil-lion evil-collection evil virtualenvwrapper yasnippet elpy company-jedi company flycheck htmlize ox-reveal zenburn-theme which-key use-package try tabbar org-bullets counsel color-theme auto-complete ace-window))))
+    (doom-modeline doom-themes better-shell iedit expand-region hungry-delete beacon yasnippet-snippets evil-escape evil-surround evil-goggles evil-expat evil-visualstar evil-replace-with-register evil-exchange evil-commentary evil-lion evil-collection evil virtualenvwrapper yasnippet elpy company-jedi company flycheck htmlize ox-reveal zenburn-theme which-key use-package try tabbar org-bullets counsel color-theme auto-complete ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
