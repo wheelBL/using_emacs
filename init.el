@@ -7,13 +7,13 @@
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/"))
 (add-to-list 'package-archives '("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/"))
-
+(add-to-list 'package-archives '("org" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/org/"))
 (package-initialize)
 
-(org-babel-load-file (expand-file-name "~/.emacs.d/preload.org"))
 
-; load platform-specific configuration
-(org-babel-load-file (expand-file-name "~/.emacs.d/platform.org"))
+
+
+
 
 
 
@@ -21,7 +21,9 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-
+; load platform-specific configuration
+(org-babel-load-file (expand-file-name "~/.emacs.d/platform.org"))
+(org-babel-load-file (expand-file-name "~/.emacs.d/preload.org"))
 (org-babel-load-file (expand-file-name "~/.emacs.d/myinit.org"))
 
 
